@@ -50,7 +50,7 @@ jobs:
   test-frontend:
     docker:
       # Docker image that is compatible with NodeJS.
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       # Checkout code from git
       # Restore from cache
@@ -68,7 +68,7 @@ jobs:
   test-backend:
     docker:
       # Docker image that is compatible with NodeJS.
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       # Checkout code from git
       # Restore from cache
