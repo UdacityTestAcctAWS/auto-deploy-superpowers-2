@@ -212,7 +212,17 @@ jobs:
   #   steps:
   #     # Checkout code from git
   #     - checkout
-      
+  deploy-infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run: 
+          name: Install tar and gzip
+          command: |
+              yum -y install tar 
+              yum -y install gzip
+    
       
   #     - run:
   #         name: Ensure back-end infrastructure exists
@@ -279,6 +289,7 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
+       
       # - deploy-infrastructure:
       #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       #     filters:
