@@ -137,7 +137,7 @@ jobs:
       steps: 
         # Checkout code from git
         # Add ssh keys with fingerprint
-        # attach workspacefur
+        # attach workspace
         # Install dependencies
         # Configure server
         - checkout
@@ -195,8 +195,8 @@ jobs:
             root: ~/
             paths:
               - project/backend
-        - destroy-environment:
-            workflow_id: "${CIRCLE_WORKFLOW_ID}"      
+        # - destroy-environment:
+            # workflow_id: "${CIRCLE_WORKFLOW_ID}"      
 
         - restore_cache:
             keys: [backend-build]
@@ -266,8 +266,8 @@ jobs:
             - project/.circleci/ansible/inventory.txt
             - output.txt
       # Here's where you will add some code to rollback on failure      
-      - destroy-environment:
-          workflow_id: "${CIRCLE_WORKFLOW_ID}" 
+      # - destroy-environment:
+        #   workflow_id: "${CIRCLE_WORKFLOW_ID}" 
 
 #
 # Invoke jobs via workflows
