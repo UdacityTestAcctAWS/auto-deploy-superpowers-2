@@ -172,8 +172,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-
-
+            - output.txt
          
   configure-infrastructure:
       docker:
@@ -183,7 +182,7 @@ jobs:
       steps: 
         # Checkout code from git
         # Add ssh keys with fingerprint
-        # attach workspacefur
+        # attach workspace
         # Install dependencies
         # Configure server
         - checkout
