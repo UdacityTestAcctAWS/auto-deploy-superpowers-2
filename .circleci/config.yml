@@ -82,6 +82,7 @@ jobs:
           command: |
             cd frontend
             npm install
+            npm install --save-dev webpack@5.72.0
             npm run test   
 
   test-backend:
