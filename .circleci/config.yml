@@ -1,7 +1,7 @@
 # Use the latest 2.1 version of CircleCI pipeline process engine.
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-#
+
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.  
@@ -10,8 +10,10 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
+            echo "Begin Destroy Environments."
             #aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:07}
             #aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+            echo "Destroy Environments complete."
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
@@ -30,9 +32,13 @@ jobs:
       - run:
           name: Build front-end
           command: |
+            echo "Begin build-frontend."
             cd frontend
             npm install
-            npm run build           
+            npm run build 
+            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
+            echo "build-frontend complete."
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -40,7 +46,8 @@ jobs:
   build-backend:
     docker:
       - image: cimg/node:13.8.0
-     # Add steps to the job
+    
+    # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - checkout
@@ -49,9 +56,13 @@ jobs:
       - run:
           name: Build back-end 
           command: |
+            echo "Begin build-backend."
             cd backend
             npm install
             npm run build
+            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
+            echo "build-backend complete."
             
       - save_cache:
           paths: [backend/node_modules]
@@ -74,6 +85,8 @@ jobs:
           command: |
             cd frontend
             npm install
+            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
             npm run test   
 
   test-backend:
@@ -92,6 +105,8 @@ jobs:
           command: |
             cd backend
             npm install
+            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
             npm run test  
 
   scan-frontend:
@@ -127,7 +142,8 @@ jobs:
              npm audit fix --audit-level=critical --force
              npm audit --audit-level=critical
 
-              
+
+        
   configure-infrastructure:
       docker:
         # Docker image here that supports Ansible
@@ -141,7 +157,7 @@ jobs:
         # Configure server
         - checkout
         - add_ssh_keys:
-            fingerprints: ["19:a9:98:05:4a:cd:5c:1d:88:17:a8:30:dc:05:c5:4d"]
+            fingerprints: ["19:a9:98:05:4a:cd:5c:1d:88:17:a8:30:dc:05:c5:4d"] 
 
         - attach_workspace:
             at: ~/
@@ -157,116 +173,281 @@ jobs:
               pip install awscli
 
               # exit 1
-        # - run:
-        #     name: Configure server
-        #     command: |
-        #       # Your code here
-        #       pwd
-        #       cat .circleci/ansible/inventory.txt
+        - run:
+            name: Configure server
+            command: |
+              # Your code here
+              pwd
+              cat .circleci/ansible/inventory.txt
 
-        #       echo ENVIRONMENT=production > "backend/.env"
-        #       ls
-        #       # echo TYPEORM_CONNECTION=postgres >> "backend/.env"
-        #       # echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
-        #       # echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
-        #       # echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
-        #       echo NODE_ENV=production >> "backend/.env"
+              echo ENVIRONMENT=production > "backend/.env"
+              ls
+              # echo TYPEORM_CONNECTION=postgres >> "backend/.env"
+              # echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
+              # echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
+              # echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
+              echo NODE_ENV=production >> "backend/.env"
 
-        #       # echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
-        #       # echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
-        #       # echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
-        #       # echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
-        #       # echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
-        #       ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
-        #       cat backend/.env
-        #       ls backend
+              # echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
+              # echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
+              # echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
+              # echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
+              # echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
+              ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
+              cat backend/.env
+              ls backend
 
-        #       # exit 1
+              # exit 1
 
 
         # Here's where you will add some code to rollback on failure  
-        # - run:
-        #     name: Install AWS CLI for rollback
-        #     when: on_fail
-        #     command: |
-        #       apk add --update py3-pip && pip3 install --upgrade pip && pip3 install awscli
-        # - persist_to_workspace:
-        #     root: ~/
-        #     paths:
-        #       - project/backend
-        # - destroy-environment:
-        #     workflow_id: "${CIRCLE_WORKFLOW_ID}"      
+        - run:
+            name: Install AWS CLI for rollback
+            when: on_fail
+            command: |
+              apk add --update py3-pip && pip3 install --upgrade pip && pip3 install awscli
+        - persist_to_workspace:
+            root: ~/
+            paths:
+              - project/backend
+        - destroy-environment:
+            workflow_id: "${CIRCLE_WORKFLOW_ID}"      
 
-        # - restore_cache:
-        #     keys: [backend-build]
-        # - run: 
-        #     name: Install dependencies
-        #     command: |
-        #       apk add --update ansible # install the dependencies needed
+        - restore_cache:
+            keys: [backend-build]
+        - run: 
+            name: Install dependencies
+            command: |
+              apk add --update ansible # install the dependencies needed
 
-  # deploy-infrastructure:
-  #   docker:
-  #     # Docker image here that supports AWS CLI
-  #      - image: circleci/node:13.8.0
+  deploy-infrastructure:
+    docker:
+      # Docker image here that supports AWS CLI
+      # - image: circleci/node:13.8.0
+       - image: amazon/aws-cli
      
-  #   steps:
-  #     # Checkout code from git
-  #     - checkout
+    steps:
+      # Checkout code from git
+      - checkout
+      - run: 
+          name: Install tar and gzip
+          command: |
+              yum -y install tar 
+              yum -y install gzip
       
-      
-  #     - run:
-  #         name: Ensure back-end infrastructure exists
-  #         command: |
-  #           aws cloudformation deploy \
-  #             # --template-file .circleci/files/backend.yml \
-  #             # --tags project=your-tag \
-  #             # --stack-name "your back-end stack name with workflow id" \
-  #             # --parameter-overrides ID="your workflow id"  
-  #             # exit 1
-  #             --template-file .circleci/files/backend.yml \
-  #             --tags project=udapeople \
-  #             --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
-  #             --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7} \
+      # Gzip is the standard file compression for Unix and Linux systems. 
+      # Gzip is faster than ZIP while compressing and decompressing. ZIP is 
+      # an archiving and compression tool, all in one, while Gzip needs the 
+      # help of Tar command to archive files. Gzip can save more disk space 
+      # than ZIP compression applications.      
+      #
+      # If the zip command isn’t already installed on your system, then run:
+      # sudo apt-get install zip or
+      #               yum -y install zip
+      #
+      # If the unzip command isn’t already installed on your system, then run:
+      #               sudo apt-get install unzip
+      #               yum -y install unzip
+      #
+      # Usage: zip -r fileName *
+      #        sudo unzip /yourpath/fileName.zip -d destinationDirectory
+      # https://www.mysoftkey.com/linux/how-to-do-zip-and-unzip-file-in-ubuntu-linux/
 
-  #     - run:
-  #         name: Ensure frontend infrastructure exists
-  #         command: |
-  #           aws cloudformation deploy \
-  #             # --template-file .circleci/files/frontend.yml \
-  #             # --tags project=your-tag \
-  #             # --stack-name "your front-end stack name with workflow id" \
-  #             # --parameter-overrides ID="your workflow id"  
-  #             # exit 1
 
-  #             --template-file .circleci/files/frontend.yml \
-  #             --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
-  #             --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7} \
-  #             --tags project=udapeople
+      - run:
+          name: Ensure back-end infrastructure exists
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/backend.yml \
+              --tags project=udapeople \
+              --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
+              --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7} \
+
+      - run:
+          name: Ensure frontend infrastructure exists
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
+              --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7} \
+              --tags project=udapeople
                    
-  #     - run:
-  #         name: Add backend IP to ansible inventory
-  #         command: |
-  #           # Your code here
-  #             echo [all] > .circleci/ansible/inventory.txt
-  #             aws ec2 describe-instances \
-  #               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-  #               --output text >> inventory            
-  #           # exit 1
+      - run:
+          name: Add backend IP to ansible inventory
+          command: |
+            # Your code here
+              echo [all] > .circleci/ansible/inventory.txt
+              aws ec2 describe-instances \
+                --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                --output text >> inventory            
+            # exit 1
 
-  #     - persist_to_workspace:
-  #         root: ~/
-  #         paths:
-  #           - project/.circleci/ansible/inventory.txt
-  #           - output.txt
-  #     # Here's where you will add some code to rollback on failure      
-  #     - destroy-environment:
-  #         workflow_id: "${CIRCLE_WORKFLOW_ID}" 
+      # DevOps Monitoring tutorial | How To Install Prometheus | AWS Amazon Linux      
+      # https://www.youtube.com/watch?v=hfWl8k8m4n8
+      - run:
+          name: update yum package repositories
+          command: |
+            # Your code here
+              sudo yum update -y \
+
+
+
+      # Section 4: Surface Critical Server Errors for Diagnosis Using Centralized Logging
+      #
+      # Setup Prometheus -  Use Prometheus as a monitoring solution since it is open-source and versatile.
+      #                     Prometheus chosen to monitor for errors and unhealthy states.
+      # 
+      # * Manually create an EC2 instance where you are going to install Prometheus and SSH into it.
+      #                   Using SSH, connect to the AWS EC2 instance where we are going to install Prometheus  
+      #                   e.g. ssh -i prometheus.pem ubuntu@ec2-3-17-28.53.us-east-2.compute.amazonaws.com
+      # 
+      # * Set up Prometheus Server on EC2 following these instructions: https://codewizardly.com/prometheus-on-aws-ec2-part1/
+      # 
+      # * Configure Prometheus for AWS Service Discovery: https://codewizardly.com/prometheus-on-aws-ec2-part3/
+      #
+      # TIP: Tip: After making edits to the prometheus.yml file in the Prometheus EC2 instance, you can consider restarting 
+      #      the EC2 instance. Consequently, SSH log into the EC2 instance again, and start the Prometheus server.
+      #
+
+
+
+      # It is best practice to create a different user than root to run specific services
+      # Q: Why do some system users have /usr/bin/false as their shell and what does that mean?
+      # A: This helps to prevent users from logging on system.
+      #    Sometimes you need a user account for a specific task. However, this account should not
+      #    be used to login to the computer. In other words, these users exist to be the
+      #    owner of specific files or processes, and are not intended to be login accounts.
+      # https://superuser.com/questions/1183311/why-do-some-system-users-have-usr-bin-false-as-their-shell
+      #
+      # NOTE: This will create a user without creating your home folder at /home/username
+      # Multiple ways to add users without home directory include:
+      #    *   useradd -M username
+      #    *   useradd --no-create-home username
+      #    *   adduser -M username
+      #    *   adduser --no-create-home username
+      # https://askubuntu.com/questions/29359/how-to-add-a-user-without-home
+      #
+      # https://becloudready.com/automate-prometheus-deployment-with-ansible/
+      #
+      - run:
+          name: create prometheus user
+          command: |
+            # Your code here [sudo useradd --no-create-home prometheus]
+              sudo useradd --no-create-home --shell /bin/false prometheus
+      - run:
+          name: create prometheus user
+          command: |
+            # Your code here [sudo useradd --no-create-home node_exporter]
+              sudo useradd --no-create-home --shell /bin/false node_exporter
+              
+      - run:
+          name: create required prometheus directories        
+          command: |
+            # Your code here
+              sudo mkdir /etc/prometheus
+              sudo mkdir /etc/prometheus/consoles
+              sudo mkdir /etc/prometheus/console_libraries
+
+              sudo mkdir /var/lib/prometheus
+
+              sudo mkdir /usr/local/bin/prometheus
+              sudo mkdir /usr/local/bin/promtool
+
+
+      # chown [OPTIONS] USER[:GROUP] FILE(s) 
+      # https://linuxize.com/post/linux-chown-command/
+      - run:  
+          name: make prometheus user owner of required prometheus directories        
+          command: |       
+            # Your code here
+              sudo chown prometheus:prometheus /etc/prometheus 
+              sudo chown -R prometheus:prometheus /etc/prometheus/consoles
+              sudo chown -R prometheus:prometheus /etc/prometheus/console_libraries  
+
+              sudo chown prometheus:prometheus /usr/local/bin/prometheus
+              sudo chown prometheus:prometheus /usr/local/bin/promtool
+     
+              sudo chown -R prometheus:prometheus /var/lib/prometheus
+              
+      # By default, Prometheus is not available in the Ubuntu 18.04 LTS (Bionic Beaver) 
+      # default repository. So you will need to add the repository for that.
+      #
+      # https://www.howtoforge.com/tutorial/monitor-ubuntu-server-with-prometheus/
+
+      - run:
+          name: Download latest stable release of prometheus and untar/install it
+          command: |
+            # Your code here use wget or curl to download prometheus. curl has flags. wget does not.
+            # wget https://github.com/prometheus/prometheus/releases/download/v2.21.0/prometheus-2.21.0.linux-amd64.tar.gz        
+              curl -LO https://github.com/prometheus/prometheus/releases/download/v2.21.0/prometheus-2.21.0.linux-amd64.tar.gz        
+              tar xvfz prometheus-2.21.0.linux-amd64.tar.gz
+              mv prometheus-2.21.0.linux-amd64 prometheus-files
+
+      # sudo apt-get update
+      # sudo apt-get install prometheus prometheus-node-exporter prometheus-pushgateway prometheus-alertmanager
+      # https://linuxhint.com/install-prometheus-ubuntu-18-04/
+      - run:
+          name: copy prometheus and promtool binary files from prometheus-files to /usr/local/bin/
+          command: |
+            # Your code here
+              sudo cp prometheus-files/prometheus /usr/local/bin/
+              sudo cp prometheus-files/promtool /usr/local/bin/
+
+      - run:
+          name: move the consoles and console_libraries directories from prometheus-files to /etc/prometheus
+          command: |
+            # Your code here
+              sudo cp -r prometheus-files/consoles /etc/prometheus
+              sudo cp -r prometheus-files/console_libraries /etc/prometheus
+
+              sudo cp prometheus-2.21.0.linux-amd64/promtool /usr/local/bin/
+              rm -rf prometheus-2.21.0.linux-amd64.tar.gz prometheus-2.21.0.linux-amd64
+
+      - run:
+          name: create prometheus.yml
+          command: |
+            # Your code here
+              echo global: > "prometheus.yml"
+              ls
+              # echo "scrape_interval:  10s" >> "prometheus.yml"
+ 
+              sudo touch /etc/prometheus/prometheus.yml
+              sudo chmod a+rw prometheus.yml
+
+              sudo touch /etc/systemd/system/prometheus.service
+              sudo chmod a+rw  /etc/systemd/system/prometheus.service
+
+
+              # https://globedrill.com/unable-to-locate-package-sysv-rc-conf/
+               
+              cd /etc/apt/
+              touch sources.list
+              # code sources.list
+              sudo chmod a+rw sources.list
+              echo "deb http://archive.ubuntu.com/ubuntu/ trusty main universe restricted multiverse" >> sources.list
+              sudo apt update
+              sudo apt-get install -y sysv-rc-conf
+              sudo sysv-rc-conf prometheus  on
+              sudo sysv-rc-conf --list
+
+            # https://askubuntu.com/questions/221293/why-is-chkconfig-no-longer-available-in-ubuntu
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/ansible/inventory.txt
+            - output.txt
+
+
+      # Here's where you will add some code to rollback on failure      
+ 
 
 #
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+
+
 workflows:
-  autodeploy:
+  serverconfig:
     jobs:
       - build-frontend
       - build-backend
@@ -279,8 +460,6 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     filters:
-      #       branches:
-      #         only: [master]          
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+            
