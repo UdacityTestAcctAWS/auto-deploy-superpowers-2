@@ -32,13 +32,11 @@ jobs:
       - run:
           name: Build front-end
           command: |
-            echo "Begin build-frontend."
             cd frontend
             npm install
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
             npm run build 
-            echo "build-frontend complete."
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
