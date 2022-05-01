@@ -34,10 +34,11 @@ jobs:
           command: |
             echo "Begin build-frontend."
             cd frontend
-            npm install
-            npm run build 
+            npm install npm@latest -g
+            npm install --save-dev webpack@5.72.0
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
+            npm run build 
             echo "build-frontend complete."
       - save_cache:
           paths: [frontend/node_modules]
@@ -58,10 +59,11 @@ jobs:
           command: |
             echo "Begin build-backend."
             cd backend
-            npm install
-            npm run build
+            npm install npm@latest -g
+            npm install --save-dev webpack@5.72.0
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
+            npm run build
             echo "build-backend complete."
             
       - save_cache:
@@ -84,7 +86,8 @@ jobs:
           name: frontend test
           command: |
             cd frontend
-            npm install
+            npm install npm@latest -g
+            npm install --save-dev webpack@5.72.0
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
             npm run test   
@@ -104,7 +107,8 @@ jobs:
           name: backend test
           command: |
             cd backend
-            npm install
+            npm install npm@latest -g
+            npm install --save-dev webpack@5.72.0
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
             npm run test  
@@ -120,7 +124,7 @@ jobs:
             name: Scan frontend dependencies
             command: |
               cd frontend
-              npm install
+              npm install npm@latest -g
               npm install --save-dev webpack@5.72.0
               npm audit fix --audit-level=critical --force
               npm audit --audit-level=critical
@@ -137,7 +141,7 @@ jobs:
           name: Scan backend dependencies
           command: |
              cd backend
-             npm install
+             npm install npm@latest -g
              npm install --save-dev webpack@5.72.0
              npm audit fix --audit-level=critical --force
              npm audit --audit-level=critical
