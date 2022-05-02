@@ -124,8 +124,6 @@ jobs:
             name: Scan frontend dependencies
             command: |
               cd frontend
-              npm cache clean --force
-              rm -rf node_modules && rm ./package-lock.json && npm install
               npm install npm@latest -g
               npm install --save-dev webpack@5.72.0
               npm audit fix --audit-level=critical --force
