@@ -35,11 +35,13 @@ jobs:
             cd frontend
             npm install
             npm run build 
-            npm audit fix --audit-level=critical --force
-            npm audit --audit-level=critical
+            npm cache clean --force
+            npm install npm@latest -g
             npm install --save-dev webpack@5.72.0
             npm install chokidar
-            npm install fsevents            
+            npm install fsevents@2.2.2
+            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical            
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
