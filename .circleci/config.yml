@@ -37,7 +37,6 @@ jobs:
             npm install npm@latest -g
             npm install --save-dev webpack
             npm install chokidar
-            npm install fsevents
             npm run build
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical            
