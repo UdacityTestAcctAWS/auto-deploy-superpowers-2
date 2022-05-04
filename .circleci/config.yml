@@ -38,8 +38,8 @@ jobs:
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
             npm install --save-dev webpack@5.72.0
-            npm install chokidar@3.5.2
-            npm install fsevents@2.2.2            
+            npm install chokidar
+            npm install fsevents            
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
