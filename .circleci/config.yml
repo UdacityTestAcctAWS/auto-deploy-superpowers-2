@@ -125,10 +125,11 @@ jobs:
             name: Scan frontend dependencies
             command: |
               cd frontend
-              npm install npm@latest -g
-              npm install --save-dev webpack@5.72.0
-              npm audit fix --audit-level=critical --force
-              npm audit --audit-level=critical
+              npm install
+              npm update
+              npm audit fix --audit-level=moderate --force
+              npm audit --audit-level=moderate
+              npm audit fix
               
              # https://www.codegrepper.com/code-examples/javascript/npm+ERR%21+code+ELIFECYCLE+npm+ERR%21+errno+1
 
