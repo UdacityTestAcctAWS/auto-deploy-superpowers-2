@@ -35,9 +35,6 @@ jobs:
             cd frontend
             npm install
             npm run build 
-            npm install webpack-dev-server --save-dev
-            npm audit fix --audit-level=high --force
-            npm audit --audit-level=high
             npm audit fix
            
       - save_cache:
