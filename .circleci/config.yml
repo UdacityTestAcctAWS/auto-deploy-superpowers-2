@@ -38,7 +38,8 @@ jobs:
             npm run build 
             npm audit fix --audit-level=critical --force 
             npm audit --audit-level=critical 
-            npm audit fix    
+            npm audit fix 
+            npm update   
 
       - save_cache:
           paths: [frontend/node_modules]
