@@ -33,9 +33,9 @@ jobs:
           name: Build front-end
           command: |
             cd frontend
+            npm cache clean --force
             npm install
             npm run build 
-            npm cache clean --force
             npm install npm@latest -g
             npm install --save-dev webpack@5.72.0
             npm install chokidar
