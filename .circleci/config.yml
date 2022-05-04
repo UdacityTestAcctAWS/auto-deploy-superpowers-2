@@ -37,7 +37,7 @@ jobs:
             npm run build 
             npm audit fix --audit-level=moderate --force
             npm audit --audit-level=moderate
-            npm audit fix
+            npm audit
             
       - save_cache:
           paths: [frontend/node_modules]
