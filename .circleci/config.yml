@@ -33,7 +33,6 @@ jobs:
           name: Build front-end
           command: |
             cd frontend
-            sudo npm cache clean --force 
             npm install npm@latest -g
             npm install --save-dev webpack
             npm install chokidar
