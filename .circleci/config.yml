@@ -127,6 +127,8 @@ jobs:
               cd frontend
               npm install
               npm update
+              npm install node-fetch
+              npm update
               npm audit fix --audit-level=moderate --force
               npm audit --audit-level=moderate
               npm audit fix
