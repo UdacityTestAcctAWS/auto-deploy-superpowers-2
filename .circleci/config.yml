@@ -179,9 +179,8 @@ jobs:
           name: Scan backend dependencies
           command: |
              cd backend
-             npm cache clean --force
-             rm -rf node_modules && rm ./package-lock.json && npm install             
-             npm install npm@latest -g
+             npm install 
+             npm update
              npm install --save-dev webpack@5.72.0
              npm audit fix --audit-level=critical --force
              npm audit --audit-level=critical
