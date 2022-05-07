@@ -59,7 +59,6 @@ jobs:
           command: |
             cd backend
             npm install
-            npm update
             npm run build
 
             
