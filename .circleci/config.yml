@@ -319,7 +319,7 @@ jobs:
           name: Add backend IP to ansible inventory
           command: |
             # Your code here
-              echo [all] > .circleci/ansible/inventory.txt
+              echo [web] > .circleci/ansible/inventory.txt
               aws ec2 describe-instances \
                 --query 'Reservations[*].Instances[*].PublicIpAddress' \
                 --output text >> inventory            
@@ -376,25 +376,25 @@ jobs:
           name: create prometheus user
           command: |
             # Your code here [sudo useradd --no-create-home prometheus]
-              sudo useradd --no-create-home --shell /bin/false prometheus
+              useradd --no-create-home --shell /bin/false prometheus
       - run:
           name: create prometheus user
           command: |
             # Your code here [sudo useradd --no-create-home node_exporter]
-              sudo useradd --no-create-home --shell /bin/false node_exporter
+              useradd --no-create-home --shell /bin/false node_exporter
               
       - run:
           name: create required prometheus directories        
           command: |
             # Your code here
-              sudo mkdir /etc/prometheus
-              sudo mkdir /etc/prometheus/consoles
-              sudo mkdir /etc/prometheus/console_libraries
+              mkdir /etc/prometheus
+              mkdir /etc/prometheus/consoles
+              mkdir /etc/prometheus/console_libraries
 
-              sudo mkdir /var/lib/prometheus
+              mkdir /var/lib/prometheus
 
-              sudo mkdir /usr/local/bin/prometheus
-              sudo mkdir /usr/local/bin/promtool
+              mkdir /usr/local/bin/prometheus
+              mkdir /usr/local/bin/promtool
 
 
       # chown [OPTIONS] USER[:GROUP] FILE(s) 
@@ -403,14 +403,14 @@ jobs:
           name: make prometheus user owner of required prometheus directories        
           command: |       
             # Your code here
-              sudo chown prometheus:prometheus /etc/prometheus 
-              sudo chown -R prometheus:prometheus /etc/prometheus/consoles
-              sudo chown -R prometheus:prometheus /etc/prometheus/console_libraries  
+              chown prometheus:prometheus /etc/prometheus 
+              chown -R prometheus:prometheus /etc/prometheus/consoles
+              chown -R prometheus:prometheus /etc/prometheus/console_libraries  
 
-              sudo chown prometheus:prometheus /usr/local/bin/prometheus
-              sudo chown prometheus:prometheus /usr/local/bin/promtool
+              chown prometheus:prometheus /usr/local/bin/prometheus
+              chown prometheus:prometheus /usr/local/bin/promtool
      
-              sudo chown -R prometheus:prometheus /var/lib/prometheus
+              chown -R prometheus:prometheus /var/lib/prometheus
               
       # By default, Prometheus is not available in the Ubuntu 18.04 LTS (Bionic Beaver) 
       # default repository. So you will need to add the repository for that.
