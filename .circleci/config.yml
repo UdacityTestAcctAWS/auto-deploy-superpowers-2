@@ -376,12 +376,12 @@ jobs:
           name: create prometheus user
           command: |
             # Your code here [sudo useradd --no-create-home prometheus]
-              useradd --no-create-home --shell /bin/false prometheus
+              adduser --no-create-home --shell /bin/false prometheus
       - run:
           name: create prometheus user
           command: |
             # Your code here [sudo useradd --no-create-home node_exporter]
-              useradd --no-create-home --shell /bin/false node_exporter
+              adduser --no-create-home --shell /bin/false node_exporter
               
       - run:
           name: create required prometheus directories        
