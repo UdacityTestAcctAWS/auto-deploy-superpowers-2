@@ -327,11 +327,11 @@ jobs:
 
       # DevOps Monitoring tutorial | How To Install Prometheus | AWS Amazon Linux      
       # https://www.youtube.com/watch?v=hfWl8k8m4n8
-      - run:
-          name: update yum package repositories
-          command: |
+      #- run:
+      #    name: update yum package repositories
+      #    command: |
             # Your code here
-              sudo yum update -y \
+       #       sudo yum update -y \
 
 
 
