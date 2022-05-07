@@ -59,9 +59,9 @@ jobs:
           command: |
             cd backend
             npm install
+            npm update
             npm run build
-            npm audit fix --audit-level=critical --force
-            npm audit --audit-level=critical
+
             
       - save_cache:
           paths: [backend/node_modules]
@@ -90,9 +90,8 @@ jobs:
           name: frontend test
           command: |
             cd frontend
-            npm install --save-dev webpack@5.72.0
-            npm audit fix --audit-level=critical --force
-            npm audit --audit-level=critical
+            npm install
+            npm update
             npm run test   
 
   test-backend:
