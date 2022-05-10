@@ -291,7 +291,7 @@ jobs:
         command: |
           # Your code here
           apk add --update ansible
-          yum -y install tar gzip
+          apt-get install tar gzip
           apk add --update tar 
           apk add --update gzip
           pip install awscli
