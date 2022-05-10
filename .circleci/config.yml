@@ -305,7 +305,6 @@ jobs:
           cat .circleci/ansible/inventory.txt
 
           echo ENVIRONMENT=production > "backend/.env"
-          ls
           echo TYPEORM_CONNECTION=postgres >> "backend/.env"
           echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
           echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
@@ -323,6 +322,7 @@ jobs:
           ls backend
 
           # exit 1
+# new        
 
     - destroy-environment
 
