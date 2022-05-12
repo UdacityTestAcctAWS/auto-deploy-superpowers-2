@@ -1,6 +1,6 @@
 ---
 # patti-awesome@frenchcocoaLaptop:~/auto-deploy-superpowers-2/.circleci/ansible/configure-server.yml
-# \\wsl$\Ubuntu-18.04\home\patti-awesome\auto-deploy-superpowers-2\.circleci\ansible\configure-server.yml
+# \\wsl$\Ubuntu-18.04\home\patti-awesome\auto-deploy-superpowers-2\.circleci\ansible\configure-server.yml and more
 - name: "configuration play." 
   hosts: web
   user: ubuntu
