@@ -13,8 +13,31 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
+            echo "Destroying environment: -${CIRCLE_WORKFLOW_ID} "
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:07}
+            aws s3 rm s3://udapeople-prod-${CIRCLE_WORKFLOW_ID:0:07} --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+
+  revert-migrations:
+    description: Revert the last migration
+    parameters:
+      workflow_id:
+        type: string
+        default: ${CIRCLE_WORKFLOW_ID:0:7}   
+    steps:
+      - run:
+          name: Revert migrations
+          when: on_fail
+          command: |
+            SUCCESS=$(curl --insecure https://kvdb.io/N4WnpYNLfMTMbwrNZrUZGT/migration_<< parameters.workflow_id >>)
+            if (( $SUCCESS == 1 ));
+            then
+              cd ~/project/backend
+              npm install
+              npm run migration:revert
+            fi
+
+
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
@@ -242,6 +265,12 @@ jobs:
               --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
               --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7} \
               --tags project=udapeople
+
+      - run:
+          name: check directory and files
+          command: pwd && ls
+
+                  
                    
       - run:
           name: Add backend IP to ansible inventory
@@ -249,8 +278,9 @@ jobs:
             # Your code here
               echo [web] > .circleci/ansible/inventory.txt
               aws ec2 describe-instances \
-                --query 'Reservations[*].Instances[*].PublicIpAddress' \
-                --output text >> inventory            
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --output text >> .circleci/ansible/inventory.txt
             # exit 1
 
       - persist_to_workspace:
@@ -260,7 +290,7 @@ jobs:
 
 
       # Here's where you will add some code to rollback on failure      
-      - destroy-environment
+      # - destroy-environment
 
       # # DevOps Monitoring tutorial | How To Install Prometheus | AWS Amazon Linux      
       # # https://www.youtube.com/watch?v=hfWl8k8m4n8
@@ -274,7 +304,7 @@ jobs:
   configure-infrastructure:
     docker:
       # Docker image here that supports Ansible
-    - image: python:3.7-alpine3.11
+    - image: python:3.7-alpine3.11 #cimg/python:3.9 
       
     steps: 
     # Checkout code from git
@@ -282,9 +312,17 @@ jobs:
     # attach workspace
     # Install dependencies
     # Configure server
+    #
+    # apk add --update ansible
+    # yum -y install tar gzip
+    # apk add --update tar 
+    # apk add --update gzip
+    # pip install awscli
+    # 19:a9:98:05:4a:cd:5c:1d:88:17:a8:30:dc:05:c5:4d
+
     - checkout
     - add_ssh_keys:
-        fingerprints: ["19:a9:98:05:4a:cd:5c:1d:88:17:a8:30:dc:05:c5:4d"] 
+        fingerprints: ["49:e2:db:3d:4f:53:7f:c6:07:4b:7f:cc:9f:47:47:af"]
 
     - attach_workspace:
         at: ~/
@@ -293,17 +331,18 @@ jobs:
         name: Install dependencies
         command: |
           # Your code here
-          apk add --update ansible
-          yum -y install tar gzip
-          apk add --update tar 
-          apk add --update gzip
-          pip install awscli
+          pip3 install ansible awscli
+          sudo apt-get install -y tar gzip
 
           # exit 1
     - run:
         name: Configure server
         command: |
           # Your code here
+          cd .circleci/ansible
+          ansible-playbook -i inventory.txt configure-server.yml
+          no_output_timeout: 30m  
+
           pwd
           cat .circleci/ansible/inventory.txt
 
