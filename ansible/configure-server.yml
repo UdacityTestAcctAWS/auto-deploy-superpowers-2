@@ -1,6 +1,4 @@
 ---
-# patti-awesome@frenchcocoaLaptop:~/auto-deploy-superpowers-2/.circleci/ansible/configure-server.yml
-# \\wsl$\Ubuntu-18.04\home\patti-awesome\auto-deploy-superpowers-2\.circleci\ansible\configure-server.yml and more
 
 - name: "configuration play." 
   hosts: web
@@ -38,6 +36,12 @@
     - TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE')}}"
     - TYPEORM_MIGRATIONS: "{{ lookup('env', 'TYPEORM_MIGRATIONS')}}"
     - TYPEORM_MIGRATIONS_DIR: "{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}"
+
+
+
+
+
+
 
   roles:
     # Your code here
