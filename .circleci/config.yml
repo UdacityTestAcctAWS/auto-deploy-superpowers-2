@@ -1,7 +1,10 @@
+---
+# /home/patti-awesome/.circleci/config.yml 
+# \\wsl$\Ubuntu-18.04\home\patti-awesome\.circleci\config.yml
+
 # Use the latest 2.1 version of CircleCI pipeline process engine.
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.  
@@ -10,36 +13,8 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-
-            echo "Destroying environment: -${CIRCLE_WORKFLOW_ID} "
-            aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:07}
-            aws s3 rm s3://udapeople-prod-${CIRCLE_WORKFLOW_ID:0:07} --recursive
-            aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-
-  revert-migrations:
-    description: Revert the last migration
-    parameters:
-      workflow_id:
-        type: string
-        default: ${CIRCLE_WORKFLOW_ID:0:7}   
-    steps:
-      - run:
-          name: Revert migrations
-          when: on_fail
-          command: |
-            SUCCESS=$(curl --insecure https://kvdb.io/N4WnpYNLfMTMbwrNZrUZGT/migration_<< parameters.workflow_id >>)
-            if (( $SUCCESS == 1 ));
-            then
-              cd ~/project/backend
-              npm install
-              npm run migration:revert
-            fi
-
-
-=======
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:07}
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
->>>>>>> 27577f0b3c948a576d47dc61e5d7170b554de072
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
@@ -62,8 +37,8 @@ jobs:
             npm install
             npm update
             npm run build 
-          
 
+          
         
       - save_cache:
           paths: [frontend/node_modules]
@@ -130,7 +105,10 @@ jobs:
           command: |
             cd backend
             npm install
-            npm run build     
+            npm run build
+#           npm audit fix --audit-level=critical --force
+#           npm audit --audit-level=critical
+            
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -192,6 +170,7 @@ jobs:
             npm install --save-dev webpack@5.72.0
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
+#           npm run test  
 
 
   scan-backend:
@@ -216,8 +195,8 @@ jobs:
     docker:
       # Docker image here that supports AWS CLI
       # - image: circleci/node:13.8.0
-      - image: amazon/aws-cli
-        user: root
+       - image: amazon/aws-cli
+         user: root
 
     steps:
       # Checkout code from git
@@ -267,15 +246,6 @@ jobs:
               --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
               --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7} \
               --tags project=udapeople
-<<<<<<< HEAD
-
-      - run:
-          name: check directory and files
-          command: pwd && ls
-
-                  
-=======
->>>>>>> 27577f0b3c948a576d47dc61e5d7170b554de072
                    
       - run:
           name: Add backend IP to ansible inventory
@@ -283,14 +253,8 @@ jobs:
             # Your code here
               echo [web] > .circleci/ansible/inventory.txt
               aws ec2 describe-instances \
-<<<<<<< HEAD
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output text >> .circleci/ansible/inventory.txt
-=======
                 --query 'Reservations[*].Instances[*].PublicIpAddress' \
                 --output text >> inventory            
->>>>>>> 27577f0b3c948a576d47dc61e5d7170b554de072
             # exit 1
 
       - persist_to_workspace:
@@ -300,11 +264,8 @@ jobs:
 
 
       # Here's where you will add some code to rollback on failure      
-<<<<<<< HEAD
-      # - destroy-environment
-=======
-      - destroy-environment
->>>>>>> 27577f0b3c948a576d47dc61e5d7170b554de072
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
       # # DevOps Monitoring tutorial | How To Install Prometheus | AWS Amazon Linux      
       # # https://www.youtube.com/watch?v=hfWl8k8m4n8
@@ -316,181 +277,162 @@ jobs:
 
           
   configure-infrastructure:
-    docker:
-      # Docker image here that supports Ansible
-    - image: python:3.7-alpine3.11 #cimg/python:3.9 
-      
-    steps: 
-    # Checkout code from git
-    # Add ssh keys with fingerprint
-    # attach workspace
-    # Install dependencies
-    # Configure server
-    #
-    # apk add --update ansible
-    # yum -y install tar gzip
-    # apk add --update tar 
-    # apk add --update gzip
-    # pip install awscli
-    # 19:a9:98:05:4a:cd:5c:1d:88:17:a8:30:dc:05:c5:4d
-
-    - checkout
-    - add_ssh_keys:
-        fingerprints: ["49:e2:db:3d:4f:53:7f:c6:07:4b:7f:cc:9f:47:47:af"]
-
-    - attach_workspace:
-        at: ~/
+      docker:
+        # Docker image here that supports Ansible
+        - image: python:3.7-alpine3.11
         
-    - run:
-        name: Install dependencies
-        command: |
-          # Your code here
-<<<<<<< HEAD
-          pip3 install ansible awscli
-          sudo apt-get install -y tar gzip
-=======
-          apk add --update ansible
-          apk add --update tar 
-          apk add --update gzip
-          pip install awscli
->>>>>>> 27577f0b3c948a576d47dc61e5d7170b554de072
+      steps: 
+        # Checkout code from git
+        # Add ssh keys with fingerprint
+        # attach workspace
+        # Install dependencies
+        # Configure server
+        - checkout
+        - add_ssh_keys:
+            fingerprints: ["19:a9:98:05:4a:cd:5c:1d:88:17:a8:30:dc:05:c5:4d"] 
 
-          # exit 1
-    - run:
-        name: Configure server
-        command: |
-          # Your code here
-<<<<<<< HEAD
-          cd .circleci/ansible
-          ansible-playbook -i inventory.txt configure-server.yml
-          no_output_timeout: 30m  
+        - attach_workspace:
+            at: ~/
+            
+        - run:
+            name: Install dependencies
+            command: |
+              # Your code here
+              apk add --update ansible
+              yum -y install tar gzip
+              apk add --update tar 
+              apk add --update gzip
+              pip install awscli
 
-=======
->>>>>>> 27577f0b3c948a576d47dc61e5d7170b554de072
-          pwd
-          cat .circleci/ansible/inventory.txt
+              # exit 1
+        - run:
+            name: Configure server
+            command: |
+              # Your code here
+              pwd
+              cat .circleci/ansible/inventory.txt
 
-          echo ENVIRONMENT=production > "backend/.env"
-          echo TYPEORM_CONNECTION=postgres >> "backend/.env"
-          echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
-          echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
-          echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
-          echo NODE_ENV=production >> "backend/.env"
+              echo ENVIRONMENT=production > "backend/.env"
+              ls
+              echo TYPEORM_CONNECTION=postgres >> "backend/.env"
+              echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
+              echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
+              echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
+              echo NODE_ENV=production >> "backend/.env"
 
-          echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
-          echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
-          echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
-          echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
-          echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
-          ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
-          no_output_timeout: 30m
-          cat backend/.env
-          ls backend
+              echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
+              echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
+              echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
+              echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
+              echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
+              ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
+              no_output_timeout: 30m
+              cat backend/.env
+              ls backend
 
-          # exit 1
-# new        
+              # exit 1
 
-    - destroy-environment
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   run-migrations:
     docker:
-    # Docker image here that supports NodeJS
-    - image: circleci/node:13.8.0
+      # Docker image here that supports NodeJS
+      - image: circleci/node:13.8.0
 
     steps:
-    # Checkout code from git
-    - checkout
-    - restore_cache:
-        keys: [backend-build]
+      # Checkout code from git
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
 
-    - run:
-        name: Install awscli
-        command: |
-          sudo apt-get update
-          sudo apt-get install -y awscli curl 
+      - run:
+         name: Install awscli
+         command: |
+           sudo apt-get update
+           sudo apt-get install -y awscli curl 
 
-    - run:
-        name: Run migrations
-        command: |
-          # Your code here
-          cd backend
-          npm install
-          npm run build
-          npm run migrations > migrations_dump.txt
-          cat migrations_dump.txt
-          # exit 1
-    - run:
-        name: Send migration status to kvdb.io
-        command: |
-          # Your code here
-          if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
-          then
-            curl https://kvdb.io/CNXVssXp4xn36vXQNvVzgY/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
-          fi
-          # exit 1
-          
-    - destroy-environment
-          
-    # Here's where you will add some code to rollback on failure      
+      - run:
+          name: Run migrations
+          command: |
+            # Your code here
+            cd backend
+            npm install
+            npm run build
+            npm run migrations > migrations_dump.txt
+            cat migrations_dump.txt
+            # exit 1
+      - run:
+          name: Send migration status to kvdb.io
+          command: |
+            # Your code here
+            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            then
+              curl https://kvdb.io/CNXVssXp4xn36vXQNvVzgY/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+            fi
+            # exit 1
+            
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+            
+     # Here's where you will add some code to rollback on failure      
 
 
   deploy-frontend:
     docker:
-    # Docker image here that supports AWS CLI
-    - image: amazon/aws-cli
-      user: root
+      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli
+        user: root
 
     steps:
-    # Checkout code from git
-    - checkout
-    - run:
-        name: Install tar/gzip utility
-        command: | 
-          yum -y install tar
-          yum -y install gzip
-    - attach_workspace:
-        at: ~/
+      # Checkout code from git
+      - checkout
+      - run:
+          name: Install tar/gzip utility
+          command: | 
+            yum -y install tar
+            yum -y install gzip
+      - attach_workspace:
+          at: ~/
 
-    - run:
-        name: Install dependencies
-        command: |
-          # your code here
-          curl -sL https://rpm.nodesource.com/setup_lts.x | bash -
-          yum -y install nodejs
-          yum install python3-pip -y
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+            curl -sL https://rpm.nodesource.com/setup_lts.x | bash -
+            yum -y install nodejs
+            yum install python3-pip -y
 
-    - run:
-        name: Get backend url
-        command: |
-          # your code here
-          export BACKEND_IP=$(aws ec2 describe-instances \
-          --query 'Reservations[*].Instances[*].PublicIpAddress' \
-          --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
-          export API_URL="http://${BACKEND_IP}:3030"
-          echo "${API_URL}"
-          echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
-          cat frontend/.env
+      - run:
+          name: Get backend url
+          command: |
+            # your code here
+            export BACKEND_IP=$(aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
+            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+            cat frontend/.env
 
 
-    - run:
-        name: Deploy frontend objects
-        command: |
-          # your code here
-          cd frontend
-          npm install
-          #npm audit fix
-          #npm audit fix --force
-          npm run build
-          tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-          aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      - run:
+          name: Deploy frontend objects
+          command: |
+            # your code here
+            cd frontend
+            npm install
+            #npm audit fix
+            #npm audit fix --force
+            npm run build
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
 
-    # Here's where you will add some code to rollback on failure      
-                  
+      # Here's where you will add some code to rollback on failure      
+                    
   deploy-backend:
     docker:
       # Docker image here that supports Ansible
-    - image: python:3.7-alpine3.11
-          
     steps:
       # Checkout code from git
       # Add ssh keys with fingerprint
@@ -503,32 +445,26 @@ jobs:
           name: Deploy backend
           command: |
             # your code here
+      # Here's where you will add some code to rollback on failure  
 
         # Here's where you will add some code to rollback on failure  
-      - run:
-          name: Install AWS CLI for rollback
-          when: on_fail
-          command: |
+        - run:
+            name: Install AWS CLI for rollback
+            when: on_fail
+            command: |
               apk add --update py3-pip && pip3 install --upgrade pip && pip3 install awscli ansible
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/backend
-<<<<<<< HEAD
+        - persist_to_workspace:
+            root: ~/
+            paths:
+              - project/backend
+        - destroy-environment:
+            workflow_id: "${CIRCLE_WORKFLOW_ID}"      
 
-
-            
-      - destroy-environment
-
-=======
-      - destroy-environment
-
->>>>>>> 27577f0b3c948a576d47dc61e5d7170b554de072
-      - restore_cache:
-          keys: [backend-build]
-      - run: 
-          name: Install dependencies
-          command: |
+        - restore_cache:
+            keys: [backend-build]
+        - run: 
+            name: Install dependencies
+            command: |
               apk add --update ansible # install the dependencies needed
 
 
@@ -611,7 +547,7 @@ jobs:
 
               sudo chown prometheus:prometheus /usr/local/bin/prometheus
               sudo chown prometheus:prometheus /usr/local/bin/promtool
-      
+     
               sudo chown -R prometheus:prometheus /var/lib/prometheus
               
       # By default, Prometheus is not available in the Ubuntu 18.04 LTS (Bionic Beaver) 
@@ -655,7 +591,7 @@ jobs:
               echo global: > "prometheus.yml"
               ls
               # echo "scrape_interval:  10s" >> "prometheus.yml"
-
+ 
               sudo touch /etc/prometheus/prometheus.yml
               sudo chmod a+rw prometheus.yml
 
@@ -664,7 +600,7 @@ jobs:
 
 
               # https://globedrill.com/unable-to-locate-package-sysv-rc-conf/
-                
+               
               cd /etc/apt/
               touch sources.list
               # code sources.list
@@ -684,7 +620,7 @@ jobs:
 
 
       # Here's where you will add some code to rollback on failure      
-
+ 
 
 #
 # Invoke jobs via workflows
@@ -707,14 +643,11 @@ workflows:
           requires: [build-frontend]
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [test-feature-branch]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
-          
-<<<<<<< HEAD
-          # new merge required
-=======
->>>>>>> 27577f0b3c948a576d47dc61e5d7170b554de072
-          
             
