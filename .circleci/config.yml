@@ -355,7 +355,6 @@ jobs:
               echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
               echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
               echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
-#             cd .circleci/ansible
               ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
               cat backend/.env
               ls backend
@@ -524,8 +523,8 @@ jobs:
       # Here's where you will add some code to rollback on failure  
       - run:
           name: Wait for the app to start 
-          no_output_timeout: 30m
           command: python -m unittest
+          no_output_timeout: 30m
 
       - destroy-environment: 
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
