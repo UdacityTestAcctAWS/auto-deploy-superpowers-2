@@ -350,7 +350,6 @@ jobs:
               echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
               echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
               echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
-            no_output_timeout: 30m
 #             echo NODE_ENV=production >> "backend/.env"
 
               echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
@@ -362,6 +361,7 @@ jobs:
               ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
               cat backend/.env
               ls backend
+            no_output_timeout: 30m
 
 
               # exit 1
