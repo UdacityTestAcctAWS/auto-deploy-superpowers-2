@@ -229,7 +229,6 @@ jobs:
       - image: amazon/aws-cli
 
     steps:
-      # Checkout code from git
       - checkout
       - run: 
           name: Install tar and gzip
@@ -277,7 +276,7 @@ jobs:
               --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7} \
               --tags project=udapeople
                    
-       - run:
+      - run:
           name: check directory and files
           command: pwd && ls
 
@@ -335,11 +334,6 @@ jobs:
             name: Install dependencies
             command: |
               # Your code here
-#             apk add --update ansible
-#             yum -y install tar gzip
-#             apk add --update tar 
-#             apk add --update gzip
-#             pip install awscli
               pip3 install ansible awscli
               sudo apt-get install -y tar gzip
               # exit 1
