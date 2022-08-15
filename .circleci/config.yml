@@ -326,21 +326,16 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["a1:e8:06:8d:07:a0:7d:68:90:63:00:85:54:8c:6c:7b"] 
-
       - attach_workspace:
-          at: ~/
-          
+          at: ~/      
       - run:
           name: Install dependencies
           command: |
-            # Your code here
             pip3 install ansible awscli
             sudo apt-get install -y tar gzip
-            # exit 1
       - run:
           name: Configure server
           command: |
-            # Your code here
             pwd
             cat .circleci/ansible/inventory.txt
             echo ENVIRONMENT=production > "backend/.env"
@@ -358,20 +353,14 @@ jobs:
             cat backend/.env
             ls backend
           no_output_timeout: 30m
-
-
-            # exit 1
-
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 
   run-migrations:
     docker:
-      # Docker image here that supports NodeJS
       - image: circleci/node:13.8.0
 
     steps:
-      # Checkout code from git
       - checkout
       - restore_cache:
           keys: [backend-build]
@@ -385,14 +374,12 @@ jobs:
       - run:
           name: Run migrations
           command: |
-            # Your code here
             cd backend
             npm install
             npm run build
             npm run migrations 
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
-            # exit 1
       - run:
           name: Send migration status to kvdb.io
           command: |
@@ -401,22 +388,16 @@ jobs:
             then
               curl https://kvdb.io/CNXVssXp4xn36vXQNvVzgY/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
-            # exit 1
-            
+           
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
             
-     # Here's where you will add some code to rollback on failure      
-
-
   deploy-frontend:
     docker:
-      # Docker image here that supports AWS CLI
       - image: amazon/aws-cli
         user: root
 
     steps:
-      # Checkout code from git
       - checkout
       - run:
           name: Install tar/gzip utility
@@ -462,11 +443,9 @@ jobs:
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
 
-      # Here's where you will add some code to rollback on failure      
                     
   deploy-backend:
     docker:
-      # Docker image here that supports Ansible
       - image: python:3.7-alpine3.11 
     steps:
       # Checkout code from git
@@ -481,7 +460,6 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # your code here
             apk add --no-cache \
             python3 \
             py3-pip \
@@ -494,7 +472,6 @@ jobs:
             aws --version            
       - run:
           name: Deploy backend
-          no_output_timeout: 30m
           command: |
             # your code here
             echo ENVIRONMENT = $ENVIRONMENT > "backend/.env"
@@ -518,8 +495,8 @@ jobs:
             echo "Contents of the inventory.txt file are -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
+          no_output_timeout: 30m
 
-      # Here's where you will add some code to rollback on failure  
       - run:
           name: Wait for the app to start 
           command: python -m unittest
