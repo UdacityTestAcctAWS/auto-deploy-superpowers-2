@@ -375,6 +375,7 @@ jobs:
           command: |
             cd backend
             npm install
+            npm update
             npm run build
             npm run migrations 
             npm run migrations > migrations_dump.txt
