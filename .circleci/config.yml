@@ -354,12 +354,12 @@ jobs:
           no_output_timeout: 30m
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
-      # - image: circleci/node:13.8.0
+
   run-migrations:
     docker:
-      - image: jruby:9.3
+      - image: circleci/node:13.8.0
+
     steps:
-      - run: sudo apt-get update && sudo apt-get install -y git sudo tar
       - checkout
       - restore_cache:
           keys: [backend-build]
@@ -387,6 +387,8 @@ jobs:
             then
               curl https://kvdb.io/CNXVssXp4xn36vXQNvVzgY/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
+            
+          no_output_timeout: 30m
            
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
