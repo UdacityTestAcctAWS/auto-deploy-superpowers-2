@@ -343,7 +343,6 @@ jobs:
             # Your code here
             pwd
             cat .circleci/ansible/inventory.txt
-
             echo ENVIRONMENT=production > "backend/.env"
             ls
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
