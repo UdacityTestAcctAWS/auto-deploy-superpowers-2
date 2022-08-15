@@ -640,7 +640,6 @@ jobs:
             fi
 
 
-        # Here's where you will add some code to rollback on failure  
         - run:
             name: Install AWS CLI for rollback
             when: on_fail
