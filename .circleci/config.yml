@@ -60,7 +60,7 @@ jobs:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
@@ -82,7 +82,7 @@ jobs:
   test-frontend:
     docker:
       # Docker image that is compatible with NodeJS.  image: cimg/node:13.8.0
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
     steps:
       # Checkout code from git
       # Restore from cache
@@ -106,7 +106,7 @@ jobs:
 
   scan-frontend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -124,7 +124,7 @@ jobs:
 
   build-backend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
     
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
@@ -149,7 +149,7 @@ jobs:
   test-backend:
     docker:
       # Docker image that is compatible with NodeJS.
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
     steps:
       # Checkout code from git
       # Restore from cache
@@ -204,7 +204,7 @@ jobs:
 
   scan-backend:
     docker:
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -315,7 +315,7 @@ jobs:
   configure-infrastructure:
     docker:
       # Docker image here that supports Ansible - image:  python:3.7-alpine3.11
-      - image: cimg/python:3.9 
+      - image: circleci/python:3.9 
       
     steps: 
       # Checkout code from git
@@ -357,7 +357,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: cimg/node:13.8.0
+      - image: circleci/node:13.8.0
 
     steps:
       - checkout
