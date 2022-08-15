@@ -532,7 +532,6 @@ jobs:
       - revert-migrations:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
 smoke-test
-# **************************************************************************************************************** #
   smoke-test:
     docker:
       - image: python:3.7-alpine3.11
@@ -639,7 +638,6 @@ smoke-test
             else
               echo "---------Unable to clean------------"
             fi
-# ****************************************************************************************************************
 
 
         # Here's where you will add some code to rollback on failure  
