@@ -314,8 +314,8 @@ jobs:
           
   configure-infrastructure:
     docker:
-      # Docker image here that supports Ansible - image: cimg/python:3.9
-      - image: python:3.7-alpine3.11
+      # Docker image here that supports Ansible - image:  python:3.7-alpine3.11
+      - image: cimg/python:3.9 
       
     steps: 
       # Checkout code from git
@@ -350,8 +350,7 @@ jobs:
             echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
-            cat backend/.env
-            ls backend
+
           no_output_timeout: 30m
       - destroy-environment:
           workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
