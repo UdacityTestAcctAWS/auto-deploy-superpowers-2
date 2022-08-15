@@ -375,6 +375,7 @@ jobs:
           command: |
             cd backend
             npm install
+            npm update kind-of --depth 11
             npm audit fix
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
