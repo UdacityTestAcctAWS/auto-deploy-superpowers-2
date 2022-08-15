@@ -60,7 +60,7 @@ jobs:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg//node:13.8.0
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
@@ -82,7 +82,7 @@ jobs:
   test-frontend:
     docker:
       # Docker image that is compatible with NodeJS.  image: cimg/node:13.8.0
-      - image: circleci/node:13.8.0
+      - image: cimg//node:13.8.0
     steps:
       # Checkout code from git
       # Restore from cache
@@ -106,7 +106,7 @@ jobs:
 
   scan-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg//node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -204,7 +204,7 @@ jobs:
 
   scan-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg//node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -224,7 +224,7 @@ jobs:
   deploy-infrastructure:
     docker:
       # Docker image here that supports AWS CLI
-      # - image: circleci/node:13.8.0
+      # - image: cimg//node:13.8.0
 #        user: root
       - image: amazon/aws-cli
 
@@ -357,7 +357,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg//node:13.8.0
 
     steps:
       - checkout
