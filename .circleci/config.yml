@@ -376,6 +376,7 @@ jobs:
             cd backend
             npm install
             npm update
+            npm audit fix
             npm run build
             npm run migrations 
             npm run migrations > migrations_dump.txt
